@@ -64,6 +64,9 @@ public class Platform extends abstractPlatform{
             this.setPosition(nextPos);
         }
         else {
+            if (field.isNextOtherTrain(nextPos)) {
+                return;
+            }
             deactivate();
         }
     }

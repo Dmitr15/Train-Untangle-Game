@@ -43,6 +43,15 @@ public class Field {
         return true;
     }
 
+    public boolean isNextOtherTrain(Point2D position){
+        for (Train train : trains) {
+            if (train.getPosition().equals(position)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     //для проверки 2
     public boolean isPlatformOnPosition(Point2D position){
         return platform.getPosition().equals(position);
