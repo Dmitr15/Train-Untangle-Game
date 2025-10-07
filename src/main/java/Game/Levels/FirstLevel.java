@@ -24,10 +24,8 @@ public class FirstLevel extends GameLevel {
         field.createTrain(new Point2D.Double(10, 30), Direction.RIGHTUP);
     }
 
-
     @Override
-    protected void addTrain(Point2D position, Direction direction) {
-    }
+    protected void addTrain(Point2D position, Direction direction) {}
 
     @Override
     protected void addTrainPaths() {
@@ -68,5 +66,4 @@ public class FirstLevel extends GameLevel {
         Point2D second_path_4 = new Point2D.Double(10, 30);
         return List.of(second_path_1, second_path_2, second_path_3, second_path_4);
     }
-
 }

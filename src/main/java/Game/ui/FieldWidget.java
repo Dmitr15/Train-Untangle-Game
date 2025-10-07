@@ -1,8 +1,6 @@
 package Game.ui;
 
 import Game.Field;
-import Game.Trains.Platform;
-import Game.Train_path;
 import Game.Trains.Train;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -17,19 +15,14 @@ public class FieldWidget {
 
     public FieldWidget(Field field) {
         this.field = field;
-
         // Инициализация виджетов путей
         this.pathWidgets = new ArrayList<>();
-        for (Train_path path : field.getPaths()) {
-            pathWidgets.add(new PathWidget(path));
-        }
-
+        pathWidgets.add(new PathWidget(this.field.getPaths()));
         // Инициализация виджетов платформ
         this.platformWidgets = new ArrayList<>();
-        for (Platform platform : field.getPlatforms()) {
-            platformWidgets.add(new PlatformWidget(platform));
+        if (this.field.getPlatforms() != null){
+            platformWidgets.add(new PlatformWidget(this.field.getPlatforms()));
         }
-
         // Инициализация виджетов поездов
         this.trainWidgets = new ArrayList<>();
         updateTrainWidgets(new HashMap<>(), null);

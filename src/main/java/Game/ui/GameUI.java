@@ -7,14 +7,12 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameUI extends JFrame {
-
     private final Game game;
     private final GamePanel gamePanel;
     private JLabel levelLabel = new JLabel("Уровень: ");
 
     public GameUI() {
         super("Train Game");
-
         this.game = new Game();
         this.game.addGameActionListener(new GameEventHandler());
 
@@ -87,9 +85,8 @@ public class GameUI extends JFrame {
         int choice = JOptionPane.showConfirmDialog(this, "Вы действительно хотите выйти из игры?", "Подтверждение выхода", JOptionPane.YES_NO_OPTION);
 
         if (choice == JOptionPane.YES_OPTION) {
-            // Закрываем игру
-            dispose(); // Закрываем окно
-            System.exit(0); // Завершаем приложение
+            dispose();
+            System.exit(0);
         }
     }
 

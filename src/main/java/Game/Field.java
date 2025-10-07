@@ -7,32 +7,67 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Field {
     private int width;
     private int height;
-    private List<Train_path> paths = new ArrayList<>();
-    private List<Platform> platforms = new ArrayList<>();
+    private Platform platform;
+    private List<Point2D> paths = new ArrayList<>();
+    private List<Train> trains = new ArrayList<>();
 
-    public boolean createPlatform(Point2D position) {
-        if (isOnPath(position) && isAvailablePosition(position)) {
-            platforms.add(new Platform(position));
-            return true;
+    //для проверки 1
+    public boolean ifPositionFree(Point2D position, Train current_train){
+        for (Train train : trains) {
+            if (train != current_train) {
+                if (train.getPosition().equals(position)) {
+                    return false;
+                }
+            }
         }
-        return false;
+        return true;
+    }
+
+    public boolean ifPlatformExists(){
+        return platform == null;
+    }
+
+    public boolean ifPositionFree(Point2D position){
+        if (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height)
+        {
+            return false;
+        }
+        for (Train train : trains) {
+                if (train.getPosition().equals(position)) {
+                    return false;
+                }
+        }
+        return true;
+    }
+
+    //для проверки 2
+    public boolean isPlatformOnPosition(Point2D position){
+        return platform.getPosition().equals(position);
+    }
+
+    public void deactivatePlatform(){
+        this.platform.deactivate();
+    }
+
+    public void createPlatform(Point2D position) {
+        if (isOnPath(position) && isAvailablePosition(position)) {
+            platform = new Platform(position, this.paths);
+        }
     }
 
     private boolean isOnPath(Point2D position) {
-        for (Train_path path : paths) {
-            if (path.get_route().contains(position)) {
-                return true;
-            }
-        }
-        return false;
+        return paths.contains(position);
     }
 
-    public List<Platform> getPlatforms() {
-        return platforms;
+    public Platform getPlatforms() {
+        return platform;
+    }
+
+    public void movePlatform(Direction direction){
+        platform.moveAlong(this, direction);
     }
 
     public Field(int width, int height){
@@ -42,66 +77,50 @@ public class Field {
         this.height = height;
     }
 
-    public Field(){
-        this.width = 100;
-        this.height = 100;
-    }
-
-    public List<Train_path> getPaths() {
+    public List<Point2D> getPaths() {
         return paths;
     }
 
     public boolean conflictingDirectionsOnTheSamePath(Point2D position, Direction direction){
-        for (Train_path path: paths) {
-            if (path.get_route().contains(position)) {
+            if (this.paths.contains(position)) {
                 for (Train train: getTrains()){
-                    if (path.get_route().contains(train.getPosition())) {
+                    if (this.paths.contains(train.getPosition())) {
                         if (train.getDirection() == direction.getOppositeDirection()) {
                             return false;
                         }
                     }
                 }
             }
-        }
         return true;
     }
 
     public void move(Train train) {
-        train.moveAlongPath(this.paths, this);
+        train.moveAlongPath( this);
     }
 
     public Train createTrain(Point2D position, Direction direction){
         boolean train_path_contains_position = false;
-
-        for (Train_path path: paths) {
-            for (Point2D point_of_path: path.get_route()) {
+            for (Point2D point_of_path: paths) {
                 if (point_of_path.equals(position)) {
                     train_path_contains_position = true;
                     break;
                 }
             }
-        }
         if (train_path_contains_position && isAvailablePosition(position) && conflictingDirectionsOnTheSamePath(position, direction)) {
-            for (Train_path train_path: paths) {
-                if (train_path.get_route().contains(position)) {
-                    Train train = new Train(position, direction);
-                    train_path.place_train(train);
+                if (paths.contains(position)) {
+                    Train train = new Train(position, direction, this.paths);
+                    this.trains.add(train);
                     return train;
                 }
-            }
         }
         return null;
     }
 
     public List<Train> getTrains() {
-        List<Train> trains = new ArrayList<>();
-        for (Train_path path: paths){
-            trains.addAll(path.getTrains());
-        }
-        return trains;
+        return this.trains;
     }
 
-    public void setPaths(Train_path paths) {
+    public void setPaths(Point2D paths) {
         this.paths.add(paths);
     }
 
@@ -111,8 +130,7 @@ public class Field {
             return false;
         }
         boolean valid = true;
-        List<Train> train1 = getTrains();
-        for (Train train: train1){
+        for (Train train: trains){
             if (train.getPosition() == position) {
                 valid = false;
                 break;
@@ -120,17 +138,15 @@ public class Field {
         }
 
         // Проверка платформ
-        for (Platform platform : platforms) {
+        if (platform != null) {
             if (platform.isActive() && platform.getPosition().equals(position)) {
-                //return false;
                 return true;
             }
         }
-
         return valid;
     }
 
-    public boolean isAvailablePosition(List<Point2D> position){
+    private boolean isAvailablePosition(List<Point2D> position){
         boolean is_available = true;
         for (Point2D point: position) {
             if (this.width <= point.getX() || this.height <= point.getY()) {
@@ -140,22 +156,33 @@ public class Field {
         return is_available;
     }
 
-    public Train_path createAPath(List<Point2D> route){
-        if (isAvailablePosition(route) && route.size() > 1) {
-            Train_path path = new Train_path(route);
-            setPaths(path);
-            return path;
+    public void createAPath(List<Point2D> route){
+        if (isAvailablePosition(route) && route.size() > 1 && isCorrectRout(route)) {
+            paths.addAll(route);
         }
-        return null;
+    }
+
+    private boolean isCorrectRout(List<Point2D> route){
+        if (route == null || route.size() < 2) return false;
+
+        for (int i = 1; i < route.size(); i++) {
+            Point2D prev = route.get(i-1);
+            Point2D current = route.get(i);
+
+            double dx = Math.abs(prev.getX() - current.getX());
+            double dy = Math.abs(prev.getY() - current.getY());
+
+            // Допустимы только горизонтальные, вертикальные и диагональные движения
+            if ((dx > 0 && dy > 0 && dx != dy) || (dx == 0 && dy == 0)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void deleteTrain(Train train){
-        if (!this.getTrains().isEmpty()) {
-            for (Train_path path : paths) {
-                if (path.getTrains().contains(train)) {
-                    path.removeTrain(train);
-                }
-            }
+        if (!this.trains.isEmpty()) {
+            this.trains.remove(train);
         }
     }
 
@@ -165,10 +192,6 @@ public class Field {
 
     public void addFieldActionListener(FieldActionListener listener) {
         fieldListListener.add(listener);
-    }
-
-    public void removeFieldCellActionListener(FieldActionListener listener) {
-        fieldListListener.remove(listener);
     }
 
     public int getWidth() {

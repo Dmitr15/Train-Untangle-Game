@@ -13,12 +13,7 @@ public class Game {
     private stateOfTheGame game_status = new stateOfTheGame();
     private GameLevel currentLevel;
     private List<GameLevel> levels = new ArrayList<>();
-
     private int currentLevelIndex = 0;
-
-    public List<GameLevel> getLevels() {
-        return levels;
-    }
 
     public void setUpGameLevel(){
         levels.clear();
@@ -51,13 +46,10 @@ public class Game {
     public void skip_a_turn(){
 
         if (levels.isEmpty()) return;
-
-        // Переходим на следующий уровень
         currentLevelIndex = (currentLevelIndex + 1) % levels.size();
         currentLevel = levels.get(currentLevelIndex);
         currentLevel.createField();
-        start(); // Регистрируем обработчики для новых поездов
-
+        start();
         // Оповещаем UI о смене уровня
         fireLevelChanged();
     }
@@ -86,10 +78,6 @@ public class Game {
         gameActionListeners.add(listener);
     }
 
-    public void removeGameActionListener(GameActionListener listener) {
-        gameActionListeners.remove(listener);
-    }
-
     private class TrainObserver implements TrainActionListener{
         @Override
         public void trainIsTeleported(TrainActionEvent event) {
@@ -113,7 +101,6 @@ public class Game {
         currentLevel = levels.get(currentLevelIndex);
         currentLevel.createField();
         start();
-
         // Оповещаем UI о смене уровня
         fireLevelChanged();
     }
