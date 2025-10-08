@@ -4,13 +4,14 @@ package Game.ui;
 import Game.Trains.Platform;
 import java.awt.*;
 import java.awt.geom.Point2D;
+import Game.Trains.abstractPlatform;
 
 public class PlatformWidget {
     private static final int CELL_SIZE = 17;
     private static final int OFFSET = 30;
-    private final Platform platform;
+    private final abstractPlatform platform;
 
-    public PlatformWidget(Platform platform) {
+    public PlatformWidget(abstractPlatform platform) {
         this.platform = platform;
     }
 

@@ -36,11 +36,21 @@ public abstract class abstractPlatform {
         this.isActive=false;
     }
 
+    public abstract void moveAlongPath(Field field);
+
+    public abstract void resetMovementHistory();
+
+    public abstract void resetNum();
+
+    public abstract List<Point2D> getMovementHistory();
+
     protected void setPaths(List<Point2D> paths){
         this.paths = paths;
     }
 
     protected abstract Point2D findNextPoint();
+
+    public abstract void moveAlong(Field field, Direction dir);
 
     protected abstract void moveAlong(Field field);
 

@@ -2,6 +2,7 @@ package Game;
 
 import Game.Trains.Platform;
 import Game.Trains.Train;
+import Game.Trains.abstractPlatform;
 import Game.event.FieldActionListener;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -10,13 +11,13 @@ import java.util.List;
 public class Field {
     private int width;
     private int height;
-    private Platform platform;
+    private abstractPlatform platform;
     private List<Point2D> paths = new ArrayList<>();
-    private List<Train> trains = new ArrayList<>();
+    private List<abstractPlatform> trains = new ArrayList<>();
 
     //для проверки 1
     public boolean ifPositionFree(Point2D position, Train current_train){
-        for (Train train : trains) {
+        for (abstractPlatform train : trains) {
             if (train != current_train) {
                 if (train.getPosition().equals(position)) {
                     return false;
@@ -27,7 +28,7 @@ public class Field {
     }
 
     public boolean ifPlatformExists(){
-        return platform == null;
+        return platform != null;
     }
 
     public boolean ifPositionFree(Point2D position){
@@ -35,7 +36,7 @@ public class Field {
         {
             return false;
         }
-        for (Train train : trains) {
+        for (abstractPlatform train : trains) {
                 if (train.getPosition().equals(position)) {
                     return false;
                 }
@@ -44,7 +45,7 @@ public class Field {
     }
 
     public boolean isNextOtherTrain(Point2D position){
-        for (Train train : trains) {
+        for (abstractPlatform train : trains) {
             if (train.getPosition().equals(position)) {
                 return true;
             }
@@ -71,7 +72,7 @@ public class Field {
         return paths.contains(position);
     }
 
-    public Platform getPlatforms() {
+    public abstractPlatform getPlatforms() {
         return platform;
     }
 
@@ -92,7 +93,7 @@ public class Field {
 
     public boolean conflictingDirectionsOnTheSamePath(Point2D position, Direction direction){
             if (this.paths.contains(position)) {
-                for (Train train: getTrains()){
+                for (abstractPlatform train: getTrains()){
                     if (this.paths.contains(train.getPosition())) {
                         if (train.getDirection() == direction.getOppositeDirection()) {
                             return false;
@@ -103,8 +104,8 @@ public class Field {
         return true;
     }
 
-    public void move(Train train) {
-        train.moveAlongPath( this);
+    public void move(abstractPlatform train) {
+        train.moveAlongPath(this);
     }
 
     public Train createTrain(Point2D position, Direction direction){
@@ -125,8 +126,15 @@ public class Field {
         return null;
     }
 
-    public List<Train> getTrains() {
-        return this.trains;
+    public List<Train > getTrains() {
+       // return this.trains;
+        List<Train> trainList = new ArrayList<>();
+        for (abstractPlatform platform : this.trains) {
+            if (platform instanceof Train) {
+                trainList.add((Train) platform);
+            }
+        }
+        return trainList;
     }
 
     public void setPaths(Point2D paths) {
@@ -139,7 +147,7 @@ public class Field {
             return false;
         }
         boolean valid = true;
-        for (Train train: trains){
+        for (abstractPlatform train: trains){
             if (train.getPosition() == position) {
                 valid = false;
                 break;

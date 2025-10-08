@@ -49,6 +49,26 @@ public class Platform extends abstractPlatform{
     }
 
     @Override
+    public void moveAlongPath(Field field) {
+
+    }
+
+    @Override
+    public void resetMovementHistory() {
+
+    }
+
+    @Override
+    public void resetNum() {
+
+    }
+
+    @Override
+    public List<Point2D> getMovementHistory() {
+        return List.of();
+    }
+
+    @Override
     protected Point2D findNextPoint() {
         return null;
     }

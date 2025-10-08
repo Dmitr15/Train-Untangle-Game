@@ -3,6 +3,8 @@ package Game.ui;
 
 import Game.Direction;
 import Game.Trains.Train;
+import Game.Trains.abstractPlatform;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
@@ -10,11 +12,11 @@ import java.awt.geom.Point2D;
 public class TrainWidget {
     private static final int CELL_SIZE = 17;
     private static final int OFFSET = 30;
-    private final Train train;
+    private final abstractPlatform train;
     private final boolean selected;
     private final Point2D position;
 
-    public TrainWidget(Train train, boolean selected, Point2D position) {
+    public TrainWidget(abstractPlatform train, boolean selected, Point2D position) {
         this.train = train;
         this.selected = selected;
         this.position = position;

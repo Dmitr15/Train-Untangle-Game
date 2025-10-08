@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
+import Game.Trains.abstractPlatform;
 
 public class FieldWidget {
     private final Field field;
@@ -28,14 +29,14 @@ public class FieldWidget {
         updateTrainWidgets(new HashMap<>(), null);
     }
 
-    public void updateTrainWidgets(Map<Train, Point2D> animatedPositions, Train selectedTrain) {
+    public void updateTrainWidgets(Map<abstractPlatform, Point2D> animatedPositions, abstractPlatform selectedTrain) {
         if (field == null) return;
 
         // Очищаем текущий список виджетов поездов
         this.trainWidgets.clear();
 
         // Для каждого поезда создаем виджет
-        for (Train train : field.getTrains()) {
+        for (abstractPlatform train : field.getTrains()) {
             // Получаем позицию для анимации или текущую позицию поезда
             Point2D position = animatedPositions.getOrDefault(train, train.getPosition());
 

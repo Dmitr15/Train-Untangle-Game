@@ -10,6 +10,8 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import Game.Trains.abstractPlatform;
 import Game.event.GameActionEvent;
 import Game.event.GameActionListener;
 import java.util.ArrayList;
@@ -21,9 +23,9 @@ public class GamePanel extends JPanel {
     private static final int CELL_SIZE = 17; // Увеличенный размер клетки
     private static final int OFFSET = 30;
     private static final int ANIMATION_SPEED = 2;
-    private final Map<Train, Point2D> animatedPositions = new HashMap<>();
-    private final Map<Train, Point2D.Double> targetPositions = new HashMap<>();
-    private Train selectedTrain = null;
+    private final Map<abstractPlatform, Point2D> animatedPositions = new HashMap<>();
+    private final Map<abstractPlatform, Point2D.Double> targetPositions = new HashMap<>();
+    private abstractPlatform selectedTrain = null;
 
 
     public GamePanel(Game game) {
@@ -99,7 +101,7 @@ public class GamePanel extends JPanel {
 
         List<Train> trains = game.getLevel().getField().getTrains();
 
-        for (Train train : trains) {
+        for (abstractPlatform train : trains) {
             Point2D animPos = animatedPositions.get(train);
             if (animPos == null) continue;
 
@@ -118,7 +120,7 @@ public class GamePanel extends JPanel {
         }
     }
 
-    private void startTrainAnimation(Train train) {
+    private void startTrainAnimation(abstractPlatform train) {
         if (fieldWidget == null) return;
         // Сохраняем исходную позицию ДО начала движения
         Point2D.Double originalPosition = new Point2D.Double(train.getPosition().getX(), train.getPosition().getY());
@@ -159,7 +161,7 @@ public class GamePanel extends JPanel {
         pathTimer.start();
     }
 
-    private void animateReturnAlongPath(Train train, List<Point2D> path, Point2D.Double originalPosition) {
+    private void animateReturnAlongPath(abstractPlatform train, List<Point2D> path, Point2D.Double originalPosition) {
         // Создаем полный путь для возврата: текущая позиция + история в обратном порядке + исходная позиция
         List<Point2D> returnPath = new ArrayList<>();
         returnPath.add(new Point2D.Double(train.getPosition().getX(), train.getPosition().getY()));
@@ -211,7 +213,7 @@ public class GamePanel extends JPanel {
     }
 
     /**  Плавная анимация поезда между двумя точками */
-    private void animateTrainMove(Train train, Point2D.Double start, Point2D.Double end) {
+    private void animateTrainMove(abstractPlatform train, Point2D.Double start, Point2D.Double end) {
         final long startTime = System.currentTimeMillis();
         final int duration = 300;
 
@@ -235,7 +237,7 @@ public class GamePanel extends JPanel {
     private void updateAnimation() {
         if (game.getLevel() == null || fieldWidget == null) return;
         List<Train> trains = game.getLevel().getField().getTrains();
-        for (Train train : trains) {
+        for (abstractPlatform train : trains) {
 
             Point2D.Double current = (Point2D.Double)animatedPositions.computeIfAbsent(train, t -> new Point2D.Double(train.getPosition().getX(), train.getPosition().getY()));
             Point2D.Double target = targetPositions.computeIfAbsent(train, t -> new Point2D.Double(train.getPosition().getX(), train.getPosition().getY()));

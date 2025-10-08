@@ -431,6 +431,11 @@ public class Train  extends abstractPlatform{
     }
 
     @Override
+    public void moveAlong(Field field, Direction dir) {
+
+    }
+
+    @Override
     protected void moveAlong(Field field) {
     }
 
@@ -439,12 +444,14 @@ public class Train  extends abstractPlatform{
         return null;
     }
 
+    @Override
     public void resetNum(){
         if (this.numOfTurns != 0) {
             this.numOfTurns = 0;
         }
     }
 
+    @Override
     public void moveAlongPath( Field field) {
         Point2D nextPosition = findNextPoint();
             if (!field.ifPositionFree(this.position, this)) {
@@ -453,7 +460,7 @@ public class Train  extends abstractPlatform{
         if (nextPosition == null) {
             this.deactivate();
             fireTrainIsTeleported();
-            if (!field.ifPlatformExists()) {
+            if (field.ifPlatformExists()) {
                 if (field.isPlatformOnPosition(this.position)) {
                     field.deactivatePlatform();
                 }
@@ -461,7 +468,7 @@ public class Train  extends abstractPlatform{
             return;
         }
         // Проверка столкновения с платформой
-        if (!field.ifPlatformExists() && field.isPlatformOnPosition(this.position)) {
+        if (field.ifPlatformExists() && field.isPlatformOnPosition(this.position)) {
             field.movePlatform(this.direction);
         }
 
@@ -480,10 +487,13 @@ public class Train  extends abstractPlatform{
             fireTrainIsTeleported();
         }
     }
+
+    @Override
     public List<Point2D> getMovementHistory() {
         return movementHistory;
     }
 
+    @Override
     public void resetMovementHistory() {
         movementHistory.clear();
     }
