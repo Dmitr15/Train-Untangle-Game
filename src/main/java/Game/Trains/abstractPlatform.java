@@ -11,6 +11,15 @@ public abstract class abstractPlatform {
     protected Point2D position;
     protected boolean isActive;
     protected List<Point2D> paths = new ArrayList<>();
+    protected Field field;
+
+    public abstractPlatform(Point2D position, Direction direction, boolean isActive, List<Point2D> paths, Field field) {
+        this.position = position;
+        this.direction = direction;
+        this.isActive = isActive;
+        this.paths = paths;
+        this.field = field;
+    }
 
     public boolean isActive() {
         return isActive;
@@ -28,6 +37,10 @@ public abstract class abstractPlatform {
         this.position = position;
     }
 
+    public Field getField() {
+        return field;
+    }
+
     public void setDirection(Direction direction){
         this.direction = direction;
     }
@@ -36,24 +49,7 @@ public abstract class abstractPlatform {
         this.isActive=false;
     }
 
-    public abstract void moveAlongPath(Field field);
-
-    public abstract void resetMovementHistory();
-
-    public abstract void resetNum();
-
-    public abstract List<Point2D> getMovementHistory();
-
-    protected void setPaths(List<Point2D> paths){
-        this.paths = paths;
-    }
-
     protected abstract Point2D findNextPoint();
 
-    public abstract void moveAlong(Field field, Direction dir);
-
-    protected abstract void moveAlong(Field field);
-
-    protected abstract Point2D calculateNextPosition();
-
+    public abstract void moveAlong();
 }

@@ -8,20 +8,18 @@ import java.util.List;
 public class Platform extends abstractPlatform{
     private Point2D previousPosition;
 
-    public Platform(Point2D position, List<Point2D> paths) {
-        this.position = position;
-        this.paths= paths;
-        this.previousPosition = position;
-        this.isActive = true;
+    public Platform(Point2D position, List<Point2D> paths,  Field field) {
+        super(position, null, true, paths, field);
     }
 
     public Point2D getPreviousPosition() {
         return previousPosition;
     }
 
-    protected Point2D findNextPoint(Direction dir) {
+    @Override
+    protected Point2D findNextPoint() {
         double dx = 0, dy = 0;
-        switch (dir) {
+        switch (this.direction) {
             case UP: dy = -10; break;
             case DOWN: dy = 10; break;
             case LEFT: dx = -10; break;
@@ -49,36 +47,8 @@ public class Platform extends abstractPlatform{
     }
 
     @Override
-    public void moveAlongPath(Field field) {
-
-    }
-
-    @Override
-    public void resetMovementHistory() {
-
-    }
-
-    @Override
-    public void resetNum() {
-
-    }
-
-    @Override
-    public List<Point2D> getMovementHistory() {
-        return List.of();
-    }
-
-    @Override
-    protected Point2D findNextPoint() {
-        return null;
-    }
-
-    @Override
-    protected void moveAlong(Field field) {
-    }
-
-    public void moveAlong(Field field, Direction dir) {
-        Point2D nextPos = findNextPoint(dir);
+    public void moveAlong() {
+        Point2D nextPos = this.findNextPoint();
         if (field.ifPositionFree(nextPos)) {
             this.previousPosition = this.getPosition();
             this.setPosition(nextPos);
@@ -89,10 +59,5 @@ public class Platform extends abstractPlatform{
             }
             deactivate();
         }
-    }
-
-    @Override
-    protected Point2D calculateNextPosition() {
-        return null;
     }
 }

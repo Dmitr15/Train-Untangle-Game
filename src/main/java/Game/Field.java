@@ -15,7 +15,6 @@ public class Field {
     private List<Point2D> paths = new ArrayList<>();
     private List<abstractPlatform> trains = new ArrayList<>();
 
-    //для проверки 1
     public boolean ifPositionFree(Point2D position, Train current_train){
         for (abstractPlatform train : trains) {
             if (train != current_train) {
@@ -53,7 +52,6 @@ public class Field {
         return false;
     }
 
-    //для проверки 2
     public boolean isPlatformOnPosition(Point2D position){
         return platform.getPosition().equals(position);
     }
@@ -63,13 +61,9 @@ public class Field {
     }
 
     public void createPlatform(Point2D position) {
-        if (isOnPath(position) && isAvailablePosition(position)) {
-            platform = new Platform(position, this.paths);
+        if (paths.contains(position) && isAvailablePosition(position)) {
+            platform = new Platform(position, this.paths, this);
         }
-    }
-
-    private boolean isOnPath(Point2D position) {
-        return paths.contains(position);
     }
 
     public abstractPlatform getPlatforms() {
@@ -77,7 +71,8 @@ public class Field {
     }
 
     public void movePlatform(Direction direction){
-        platform.moveAlong(this, direction);
+        platform.setDirection(direction);
+        platform.moveAlong();
     }
 
     public Field(int width, int height){
@@ -105,7 +100,7 @@ public class Field {
     }
 
     public void move(abstractPlatform train) {
-        train.moveAlongPath(this);
+        train.moveAlong();
     }
 
     public Train createTrain(Point2D position, Direction direction){
@@ -118,7 +113,7 @@ public class Field {
             }
         if (train_path_contains_position && isAvailablePosition(position) && conflictingDirectionsOnTheSamePath(position, direction)) {
                 if (paths.contains(position)) {
-                    Train train = new Train(position, direction, this.paths);
+                    Train train = new Train(position, direction, this.paths, this);
                     this.trains.add(train);
                     return train;
                 }
@@ -127,7 +122,6 @@ public class Field {
     }
 
     public List<Train > getTrains() {
-       // return this.trains;
         List<Train> trainList = new ArrayList<>();
         for (abstractPlatform platform : this.trains) {
             if (platform instanceof Train) {
@@ -163,24 +157,20 @@ public class Field {
         return valid;
     }
 
-    private boolean isAvailablePosition(List<Point2D> position){
-        boolean is_available = true;
-        for (Point2D point: position) {
-            if (this.width <= point.getX() || this.height <= point.getY()) {
-                is_available = false;
-            }
-        }
-        return is_available;
-    }
-
     public void createAPath(List<Point2D> route){
-        if (isAvailablePosition(route) && route.size() > 1 && isCorrectRout(route)) {
+        if (route.size() > 1 && isCorrectRout(route)) {
             paths.addAll(route);
         }
     }
 
     private boolean isCorrectRout(List<Point2D> route){
         if (route == null || route.size() < 2) return false;
+
+        for (Point2D point: route) {
+            if (this.width <= point.getX() || this.height <= point.getY()) {
+                return false;
+            }
+        }
 
         for (int i = 1; i < route.size(); i++) {
             Point2D prev = route.get(i-1);

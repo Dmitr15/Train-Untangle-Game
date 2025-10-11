@@ -1,27 +1,22 @@
-// Поезд (TrainWidget.java)
 package Game.ui;
 
 import Game.Direction;
-import Game.Trains.Train;
 import Game.Trains.abstractPlatform;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
-public class TrainWidget {
-    private static final int CELL_SIZE = 17;
-    private static final int OFFSET = 30;
+public class TrainWidget extends abstractWidget {
     private final abstractPlatform train;
     private final boolean selected;
-    private final Point2D position;
 
     public TrainWidget(abstractPlatform train, boolean selected, Point2D position) {
+        super(position);
         this.train = train;
         this.selected = selected;
-        this.position = position;
     }
 
+    @Override
     public void draw(Graphics2D g2) {
         int x = OFFSET + (int) Math.round(position.getX() * CELL_SIZE);
         int y = OFFSET + (int) Math.round(position.getY() * CELL_SIZE);
@@ -67,6 +62,6 @@ public class TrainWidget {
         transform.translate(x, y);     // Перемещаем в позицию поезда
         transform.rotate(angle);       // Поворачиваем на нужный угол
         g2.setColor(Color.WHITE);
-        g2.drawString(direction.name(), x + 10, y - 10);
+        g2.drawString(train.getDirection().name(), x + 10, y - 10);
     }
 }

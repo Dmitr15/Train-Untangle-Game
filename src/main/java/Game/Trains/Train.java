@@ -12,11 +12,8 @@ public class Train  extends abstractPlatform{
     private int numOfTurns = 0;
     private List<Point2D> movementHistory = new ArrayList<>();
 
-    public Train(Point2D position, Direction direction, List<Point2D> paths){
-        this.position = position;
-        this.direction = direction;
-        this.paths = paths;
-        this.isActive = true;
+    public Train(Point2D position, Direction direction, List<Point2D> paths, Field field){
+        super(position, direction, true, paths, field);
     }
 
     private ArrayList<TrainActionListener> trainListListener = new ArrayList<>();
@@ -430,21 +427,7 @@ public class Train  extends abstractPlatform{
         return null;
     }
 
-    @Override
-    public void moveAlong(Field field, Direction dir) {
 
-    }
-
-    @Override
-    protected void moveAlong(Field field) {
-    }
-
-    @Override
-    public Point2D calculateNextPosition() {
-        return null;
-    }
-
-    @Override
     public void resetNum(){
         if (this.numOfTurns != 0) {
             this.numOfTurns = 0;
@@ -452,7 +435,7 @@ public class Train  extends abstractPlatform{
     }
 
     @Override
-    public void moveAlongPath( Field field) {
+    public void moveAlong() {
         Point2D nextPosition = findNextPoint();
             if (!field.ifPositionFree(this.position, this)) {
                 return; // Столкновение - не двигаемся
@@ -488,12 +471,10 @@ public class Train  extends abstractPlatform{
         }
     }
 
-    @Override
     public List<Point2D> getMovementHistory() {
         return movementHistory;
     }
 
-    @Override
     public void resetMovementHistory() {
         movementHistory.clear();
     }
