@@ -15,9 +15,15 @@ public class Field {
     private List<Point2D> paths = new ArrayList<>();
     private List<abstractPlatform> trains = new ArrayList<>();
 
-    public boolean ifPositionFree(Point2D position, Train current_train){
+    public boolean ifPositionFree(Point2D position, abstractPlatform current_train){
+        if (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height)
+        {
+            return false;
+        }
+
         for (abstractPlatform train : trains) {
-            if (train != current_train) {
+            //train != current_train
+            if (!train.equals(current_train) && current_train instanceof Train) {
                 if (train.getPosition().equals(position)) {
                     return false;
                 }

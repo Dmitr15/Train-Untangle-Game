@@ -17,7 +17,7 @@ public class Platform extends abstractPlatform{
     }
 
     @Override
-    protected Point2D findNextPoint() {
+    public Point2D findNextPoint() {
         double dx = 0, dy = 0;
         switch (this.direction) {
             case UP: dy = -10; break;
@@ -49,15 +49,13 @@ public class Platform extends abstractPlatform{
     @Override
     public void moveAlong() {
         Point2D nextPos = this.findNextPoint();
-        if (field.ifPositionFree(nextPos)) {
+        if (field.ifPositionFree(this.getPosition(), this)) {
             this.previousPosition = this.getPosition();
             this.setPosition(nextPos);
         }
         else {
-            if (field.isNextOtherTrain(nextPos)) {
-                return;
-            }
             deactivate();
+            return;
         }
     }
 }

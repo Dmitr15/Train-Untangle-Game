@@ -49,7 +49,7 @@ public abstract class abstractPlatform {
         this.isActive=false;
     }
 
-    protected abstract Point2D findNextPoint();
+    public abstract Point2D findNextPoint();
 
     public abstract void moveAlong();
 }
