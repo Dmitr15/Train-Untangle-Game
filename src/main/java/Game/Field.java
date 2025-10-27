@@ -16,14 +16,14 @@ public class Field {
     private List<abstractPlatform> trains = new ArrayList<>();
 
     public boolean ifPositionFree(Point2D position, abstractPlatform current_train){
-        if (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height)
+        if (position.getX() <= 0 || position.getY() <= 0 || position.getX() >= width || position.getY() >= height)
         {
             return false;
         }
 
         for (abstractPlatform train : trains) {
             //train != current_train
-            if (!train.equals(current_train) && current_train instanceof Train) {
+            if (train != current_train) {
                 if (train.getPosition().equals(position)) {
                     return false;
                 }
@@ -34,28 +34,6 @@ public class Field {
 
     public boolean ifPlatformExists(){
         return platform != null;
-    }
-
-    public boolean ifPositionFree(Point2D position){
-        if (position.getX() < 0 || position.getY() < 0 || position.getX() >= width || position.getY() >= height)
-        {
-            return false;
-        }
-        for (abstractPlatform train : trains) {
-                if (train.getPosition().equals(position)) {
-                    return false;
-                }
-        }
-        return true;
-    }
-
-    public boolean isNextOtherTrain(Point2D position){
-        for (abstractPlatform train : trains) {
-            if (train.getPosition().equals(position)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public boolean isPlatformOnPosition(Point2D position){

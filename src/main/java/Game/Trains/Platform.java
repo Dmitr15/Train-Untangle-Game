@@ -1,6 +1,5 @@
 package Game.Trains;
 
-import Game.Direction;
 import Game.Field;
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -47,15 +46,20 @@ public class Platform extends abstractPlatform{
     }
 
     @Override
-    public void moveAlong() {
-        Point2D nextPos = this.findNextPoint();
-        if (field.ifPositionFree(this.getPosition(), this)) {
-            this.previousPosition = this.getPosition();
-            this.setPosition(nextPos);
-        }
-        else {
-            deactivate();
-            return;
-        }
+    protected void performMovement(Point2D nextPosition) {
+        this.previousPosition = this.position;
+        this.position = nextPosition;
+    }
+
+    @Override
+    protected void handleInvalidMovement() {
+        deactivate();
+        return;
+    }
+
+    @Override
+    protected void handleCollision() {
+        deactivate();
+        return;
     }
 }

@@ -427,7 +427,6 @@ public class Train  extends abstractPlatform{
         return null;
     }
 
-
     public void resetNum(){
         if (this.numOfTurns != 0) {
             this.numOfTurns = 0;
@@ -435,38 +434,35 @@ public class Train  extends abstractPlatform{
     }
 
     @Override
-    public void moveAlong() {
-        Point2D nextPosition = findNextPoint();
-        if (!field.ifPositionFree(this.position, this)) {
-            return; // Столкновение - не двигаемся
-        }
-        push(nextPosition);
-
-        // Проверка возможности перемещения
+    protected void performMovement(Point2D nextPosition) {
+    // Проверка возможности перемещения по путям
         if (paths.contains(nextPosition)) {
             movementHistory.add(new Point2D.Double(position.getX(), position.getY()));
+            Point2D old_position =position;
             position = nextPosition;
+
+            // Проверка столкновения с платформой
+            if (field.ifPlatformExists() && field.isPlatformOnPosition(old_position)) {
+                field.movePlatform(direction);
+            }
         } else {
-            deactivate();
-            fireTrainIsTeleported();
+            handleInvalidMovement();
         }
     }
 
-    private void push(Point2D nextPosition){
-        if (nextPosition == null) {
-            this.deactivate();
-            fireTrainIsTeleported();
-            if (field.ifPlatformExists()) {
-                if (field.isPlatformOnPosition(this.position)) {
-                    field.deactivatePlatform();
-                }
-            }
-            return;
+    @Override
+    protected void handleInvalidMovement() {
+        deactivate();
+        fireTrainIsTeleported();
+
+        if (field.ifPlatformExists() && field.isPlatformOnPosition(position)) {
+            field.deactivatePlatform();
         }
-        // Проверка столкновения с платформой
-        if (field.ifPlatformExists() && field.isPlatformOnPosition(this.position)) {
-            field.movePlatform(this.direction);
-        }
+    }
+
+    @Override
+    protected void handleCollision() {
+        return;
     }
 
     public List<Point2D> getMovementHistory() {

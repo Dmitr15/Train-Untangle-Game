@@ -51,5 +51,28 @@ public abstract class abstractPlatform {
 
     public abstract Point2D findNextPoint();
 
-    public abstract void moveAlong();
+    public  void moveAlong(){
+        if (!isActive) return;
+
+        Point2D nextPos = findNextPoint();
+        if (nextPos == null) {
+            if (!field.ifPositionFree(position, this)) {
+                handleCollision();
+            }
+            else {
+                handleInvalidMovement();
+                return;
+            }
+        }
+
+        if (field.ifPositionFree(position, this)) {
+            performMovement(nextPos);
+        } else {
+            handleCollision();
+        }
+    }
+
+    protected abstract void performMovement(Point2D nextPosition);
+    protected abstract void handleInvalidMovement();
+    protected abstract void handleCollision();
 }
