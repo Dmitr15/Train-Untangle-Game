@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
+import Game.Trains.UniquePlatform;
 import Game.Trains.abstractPlatform;
 
 public class FieldWidget {
@@ -21,7 +22,11 @@ public class FieldWidget {
         // Инициализация виджетов платформ
         this.platformWidgets = new ArrayList<>();
         if (this.field.getPlatforms() != null){
-            platformWidgets.add(new PlatformWidget(this.field.getPlatforms()));
+            if (this.field.getPlatforms() instanceof UniquePlatform) {
+                platformWidgets.add(new PlatformWidget(this.field.getPlatforms(), new Color(87, 10, 170)));
+            }else {
+                platformWidgets.add(new PlatformWidget(this.field.getPlatforms(), new Color(139, 69, 19)));
+            }
         }
         // Инициализация виджетов поездов
         this.trainWidgets = new ArrayList<>();

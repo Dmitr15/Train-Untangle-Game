@@ -6,10 +6,12 @@ import Game.Trains.abstractPlatform;
 
 public class PlatformWidget extends abstractWidget {
     private final abstractPlatform platform;
+    private final Color color;
 
-    public PlatformWidget(abstractPlatform platform) {
+    public PlatformWidget(abstractPlatform platform, Color color) {
         super(platform.getPosition());
         this.platform = platform;
+        this.color = color;
     }
 
     @Override
@@ -19,8 +21,7 @@ public class PlatformWidget extends abstractWidget {
         Point2D pos = platform.getPosition();
         int x = OFFSET + (int) Math.round(pos.getX() * CELL_SIZE);
         int y = OFFSET + (int) Math.round(pos.getY() * CELL_SIZE);
-
-        g2.setColor(new Color(139, 69, 19));
+        g2.setColor(this.color);
         int platformSize = CELL_SIZE - 6;
         int platformX = x - platformSize / 2;
         int platformY = y - platformSize / 2;
