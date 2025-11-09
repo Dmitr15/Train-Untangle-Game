@@ -1,25 +1,3 @@
-//package Game.Trains;
-//
-//import Game.Field;
-//
-//import java.awt.geom.Point2D;
-//import java.util.List;
-//
-//public class UniquePlatform extends Platform{
-//
-//    private final int steps;
-//
-//    public UniquePlatform(Point2D position, List<Point2D> paths, Field field, int steps) {
-//        super(position, paths, field);
-//        this.steps = steps;
-//    }
-//
-//    public int getSteps() {
-//        return steps;
-//    }
-//}
-
-
 package Game.Trains;
 
 import Game.Field;
@@ -34,6 +12,18 @@ public class UniquePlatform extends Platform {
 
     public void setMoveable(boolean moveable) {
         isMoveable = moveable;
+    }
+
+    public void setPushingTrain(Train pushingTrain) {
+        this.pushingTrain = pushingTrain;
+    }
+
+    public void setCurrentSteps(int currentSteps) {
+        this.currentSteps = currentSteps;
+    }
+
+    public int getMaxSteps() {
+        return maxSteps;
     }
 
     public boolean isMoveable() {
@@ -96,7 +86,6 @@ public class UniquePlatform extends Platform {
         // При столкновении сбрасываем счетчик
         currentSteps = 0;
         pushingTrain = null;
-        //initialTrainPosition = null;
         this.isMoveable = false;
         super.handleCollision();
     }
