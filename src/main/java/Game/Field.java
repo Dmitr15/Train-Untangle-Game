@@ -2,6 +2,7 @@ package Game;
 
 import Game.Trains.Platform;
 import Game.Trains.Train;
+import Game.Trains.UniquePlatform;
 import Game.Trains.abstractPlatform;
 import Game.event.FieldActionListener;
 import java.awt.geom.Point2D;
@@ -22,14 +23,23 @@ public class Field {
         }
 
         for (abstractPlatform train : trains) {
-            //train != current_train
-            if (train != current_train) {
+            if (train != current_train && !(current_train instanceof UniquePlatform)) {
                 if (train.getPosition().equals(position)) {
                     return false;
                 }
             }
         }
+        if (platform != null && platform instanceof UniquePlatform && !((UniquePlatform) platform).isMoveable() && platform.getPosition().equals(position)) {
+            return false;
+        }
+
         return true;
+    }
+
+    public void setMoveableToUnique(){
+        if (platform instanceof UniquePlatform) {
+            ((UniquePlatform) platform).setMoveable(true);
+        }
     }
 
     public boolean ifPlatformExists(){
@@ -47,6 +57,12 @@ public class Field {
     public void createPlatform(Point2D position) {
         if (paths.contains(position) && isAvailablePosition(position)) {
             platform = new Platform(position, this.paths, this);
+        }
+    }
+
+    public void createUniquePlatform(Point2D position, int step) {
+        if (paths.contains(position) && isAvailablePosition(position)) {
+            platform = new UniquePlatform(position, this.paths, this, step);
         }
     }
 
