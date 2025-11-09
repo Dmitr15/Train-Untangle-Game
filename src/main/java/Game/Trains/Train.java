@@ -437,14 +437,26 @@ public class Train  extends abstractPlatform{
     protected void performMovement(Point2D nextPosition) {
     // Проверка возможности перемещения по путям
         if (paths.contains(nextPosition)) {
+            if (movementHistory.isEmpty()) {
+                field.setMoveableToUnique();
+            }
             movementHistory.add(new Point2D.Double(position.getX(), position.getY()));
             Point2D old_position =position;
-            position = nextPosition;
 
             // Проверка столкновения с платформой
             if (field.ifPlatformExists() && field.isPlatformOnPosition(old_position)) {
                 field.movePlatform(direction);
             }
+
+            if (!field.ifPlatformExists() || field.ifPlatformExists() && !(field.getPlatforms() instanceof UniquePlatform)) {
+                position = nextPosition;
+            } else if (field.ifPlatformExists() && field.getPlatforms() instanceof UniquePlatform && ((UniquePlatform) field.getPlatforms()).isMoveable()) {
+                position = nextPosition;
+            }
+            else if (field.ifPlatformExists() && field.getPlatforms() instanceof UniquePlatform && !((UniquePlatform) field.getPlatforms()).isMoveable()) {
+                position = old_position;
+            }
+
         } else {
             handleInvalidMovement();
         }
