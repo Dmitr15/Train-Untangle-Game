@@ -67,8 +67,6 @@ public abstract class abstractPlatform {
 
         if (field.ifPositionFree(position, this)) {
             performMovement(nextPos);
-        } else {
-            handleCollision();
         }
     }
 
