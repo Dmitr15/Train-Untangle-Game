@@ -29,7 +29,7 @@ import java.util.List;
 public class UniquePlatform extends Platform {
     private final int maxSteps;
     private int currentSteps;
-    private boolean isMoveable = true;
+    private boolean isMoveable;
     private Train pushingTrain;
 
     public void setMoveable(boolean moveable) {
@@ -49,6 +49,7 @@ public class UniquePlatform extends Platform {
         this.maxSteps = steps;
         this.currentSteps = 0;
         this.pushingTrain = null;
+        this.isMoveable = true;
     }
 
     @Override
