@@ -20,7 +20,7 @@ public class FirstLevel extends GameLevel {
 
     @Override
     protected void addTrains() {
-        field.createTrain(new Point2D.Double(10, 10), Direction.RIGHTDOWN);
+        field.createTrain(new Point2D.Double(10, 10), Direction.RIGHT);
         field.createTrain(new Point2D.Double(10, 30), Direction.RIGHTUP);
     }
 
@@ -38,7 +38,9 @@ public class FirstLevel extends GameLevel {
         List<Point2D> third_path =setUpThirdPoints();
         field.createAPath(third_path);
 
-        field.createPlatform(new Point2D.Double(30, 20));
+        //field.createPlatform(new Point2D.Double(30, 20));
+
+        field.createUniquePlatform(new Point2D.Double(30, 10), 2);
     }
 
     private static List<Point2D> setUpFirstPoints() {
