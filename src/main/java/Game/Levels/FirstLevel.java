@@ -38,9 +38,9 @@ public class FirstLevel extends GameLevel {
         List<Point2D> third_path =setUpThirdPoints();
         field.createAPath(third_path);
 
-        //field.createPlatform(new Point2D.Double(30, 20));
+        field.createPlatform(new Point2D.Double(30, 10));
 
-        field.createUniquePlatform(new Point2D.Double(30, 10), 2);
+        //field.createUniquePlatform(new Point2D.Double(30, 10), 2);
     }
 
     private static List<Point2D> setUpFirstPoints() {

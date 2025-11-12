@@ -22,7 +22,7 @@ public class SecondLevel extends GameLevel{
     @Override
     protected void addTrains() {
         field.createTrain(new Point2D.Double(10, 20), Direction.RIGHT);
-        field.createTrain(new Point2D.Double(30, 10), Direction.DOWNLEFT);
+        field.createTrain(new Point2D.Double(30, 10), Direction.DOWNRIGHT);
     }
 
     @Override
@@ -37,6 +37,9 @@ public class SecondLevel extends GameLevel{
 
         List<Point2D> second_path =setUpSecondPoints();
         field.createAPath(second_path);
+
+
+        field.createUniquePlatform(new Point2D.Double(40, 20), 2);
     }
 
     private static List<Point2D> setUpFirstPoints() {
@@ -45,8 +48,10 @@ public class SecondLevel extends GameLevel{
         Point2D first_path_3 = new Point2D.Double(30, 20);
         Point2D first_path_4 = new Point2D.Double(40, 20);
         Point2D first_path_5 = new Point2D.Double(50, 20);
+        Point2D second_path_5 = new Point2D.Double(60, 20);
+        Point2D second_path_6 = new Point2D.Double(70, 20);
 
-        return List.of(first_path_1, first_path_2, first_path_3, first_path_4, first_path_5);
+        return List.of(first_path_1, first_path_2, first_path_3, first_path_4, first_path_5, second_path_5, second_path_6);
     }
 
     private static List<Point2D> setUpSecondPoints() {

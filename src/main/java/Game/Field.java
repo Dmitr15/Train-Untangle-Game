@@ -23,7 +23,7 @@ public class Field {
         }
 
         for (abstractPlatform train : trains) {
-            if (train != current_train && !(current_train instanceof UniquePlatform)) {
+            if (train != current_train && !(current_train instanceof Platform)) {
                 if (train.getPosition().equals(position)) {
                     return false;
                 }
