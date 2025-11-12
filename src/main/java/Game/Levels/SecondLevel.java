@@ -22,7 +22,7 @@ public class SecondLevel extends GameLevel{
     @Override
     protected void addTrains() {
         field.createTrain(new Point2D.Double(10, 20), Direction.RIGHT);
-        field.createTrain(new Point2D.Double(30, 10), Direction.DOWNRIGHT);
+        //field.createTrain(new Point2D.Double(30, 10), Direction.DOWNRIGHT);
     }
 
     @Override
