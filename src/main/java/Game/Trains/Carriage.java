@@ -4,11 +4,11 @@ import Game.Field;
 import java.awt.geom.Point2D;
 import java.util.List;
 
-public class UniquePlatform extends Platform {
+public class Carriage extends AbstractCarriage {
     private final int maxSteps;
     private int currentSteps;
-    private boolean isMoveable;
-    private Train pushingTrain;
+    //private boolean isMoveable;
+    //private Train pushingTrain;
 
     public void setMoveable(boolean moveable) {
         isMoveable = moveable;
@@ -34,8 +34,8 @@ public class UniquePlatform extends Platform {
         return pushingTrain;
     }
 
-    public UniquePlatform(Point2D position, List<Point2D> paths, Field field, int steps) {
-        super(position, paths, field);
+    public Carriage(Point2D position, List<Point2D> paths, Field field, int steps) {
+        super(position, null, true, paths, field);
         this.maxSteps = steps;
         this.currentSteps = 0;
         this.pushingTrain = null;

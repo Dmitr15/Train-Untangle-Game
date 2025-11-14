@@ -448,12 +448,12 @@ public class Train  extends abstractPlatform{
                 field.movePlatform(direction);
             }
 
-            if (!field.ifPlatformExists() || field.ifPlatformExists() && !(field.getPlatforms() instanceof UniquePlatform)) {
+            if (!field.ifPlatformExists() || field.ifPlatformExists() && !(field.getPlatforms() instanceof Carriage)) {
                 position = nextPosition;
-            } else if (field.ifPlatformExists() && field.getPlatforms() instanceof UniquePlatform && ((UniquePlatform) field.getPlatforms()).isMoveable()) {
+            } else if (field.ifPlatformExists() && field.getPlatforms() instanceof Carriage && ((Carriage) field.getPlatforms()).isMoveable()) {
                 position = nextPosition;
             }
-            else if (field.ifPlatformExists() && field.getPlatforms() instanceof UniquePlatform && !((UniquePlatform) field.getPlatforms()).isMoveable()) {
+            else if (field.ifPlatformExists() && field.getPlatforms() instanceof Carriage && !((Carriage) field.getPlatforms()).isMoveable()) {
                 position = old_position;
             }
 

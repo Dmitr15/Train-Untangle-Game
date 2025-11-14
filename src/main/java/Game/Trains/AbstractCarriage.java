@@ -1,19 +1,15 @@
 package Game.Trains;
 
+import Game.Direction;
 import Game.Field;
+
 import java.awt.geom.Point2D;
 import java.util.List;
 
-public class Platform extends AbstractCarriage{
-    //private Point2D previousPosition;
-
-    public Platform(Point2D position, List<Point2D> paths,  Field field) {
-        super(position, null, true, paths, field);
-    }
-
-    public Point2D getPreviousPosition() {
-        return previousPosition;
-    }
+public abstract class AbstractCarriage extends abstractPlatform{
+    protected boolean isMoveable;
+    protected Train pushingTrain;
+    protected Point2D previousPosition;
 
     @Override
     public Point2D findNextPoint() {
@@ -45,21 +41,26 @@ public class Platform extends AbstractCarriage{
         return new Point2D.Double(this.position.getX() + dx, this.position.getY() + dy);
     }
 
-//    @Override
-//    protected void performMovement(Point2D nextPosition) {
-//        this.previousPosition = this.position;
-//        this.position = nextPosition;
-//    }
-//
-//    @Override
-//    protected void handleInvalidMovement() {
-//        deactivate();
-//        return;
-//    }
-//
-//    @Override
-//    protected void handleCollision() {
-//        deactivate();
-//        return;
-//    }
+
+    public AbstractCarriage(Point2D position, Direction direction, boolean isActive, List<Point2D> paths, Field field) {
+        super(position, direction, isActive, paths, field);
+    }
+
+    @Override
+    protected void performMovement(Point2D nextPosition) {
+        this.previousPosition = this.position;
+        this.position = nextPosition;
+    }
+
+    @Override
+    protected void handleInvalidMovement() {
+        deactivate();
+        return;
+    }
+
+    @Override
+    protected void handleCollision() {
+        deactivate();
+        return;
+    }
 }
