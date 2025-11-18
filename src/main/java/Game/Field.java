@@ -176,8 +176,12 @@ public class Field {
             double dx = Math.abs(prev.getX() - current.getX());
             double dy = Math.abs(prev.getY() - current.getY());
 
-            // Допустимы только горизонтальные, вертикальные и диагональные движения
-            if ((dx > 0 && dy > 0 && dx != dy) || (dx == 0 && dy == 0)) {
+            boolean isHorizontal = dx > 0 && dy == 0;
+            boolean isVertical = dx == 0 && dy > 0;
+
+            boolean isValidStep = (dx % 10 == 0) && (dy % 10 == 0);
+
+            if ((!isHorizontal && !isVertical) || !isValidStep || (dx == 0 && dy == 0)) {
                 return false;
             }
         }
