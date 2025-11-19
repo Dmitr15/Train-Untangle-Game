@@ -45,21 +45,21 @@ public class Platform extends AbstractCarriage{
         return new Point2D.Double(this.position.getX() + dx, this.position.getY() + dy);
     }
 
-//    @Override
-//    protected void performMovement(Point2D nextPosition) {
-//        this.previousPosition = this.position;
-//        this.position = nextPosition;
-//    }
-//
-//    @Override
-//    protected void handleInvalidMovement() {
-//        deactivate();
-//        return;
-//    }
-//
-//    @Override
-//    protected void handleCollision() {
-//        deactivate();
-//        return;
-//    }
+    @Override
+    protected void performMovement(Point2D nextPosition) {
+        this.previousPosition = this.position;
+        this.position = nextPosition;
+    }
+
+    @Override
+    protected void handleInvalidMovement() {
+        deactivate();
+        return;
+    }
+
+    @Override
+    protected void handleCollision() {
+        deactivate();
+        return;
+    }
 }
