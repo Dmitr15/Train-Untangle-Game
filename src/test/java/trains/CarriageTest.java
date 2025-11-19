@@ -2,7 +2,7 @@ package trains;
 
 import Game.Field;
 import Game.Direction;
-import Game.Trains.Carriage;
+import Game.Trains.Platform;
 import Game.Trains.Train;
 import Game.Trains.abstractPlatform;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class CarriageTest {
 
     @Test
     void testCarriageCreation() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
 
         assertNotNull(carriage);
         assertEquals(new Point2D.Double(10, 10), carriage.getPosition());
@@ -47,7 +47,7 @@ class CarriageTest {
 
     @Test
     void testCarriageMovementWithinLimit() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
         carriage.setDirection(Direction.RIGHT);
 
         carriage.moveAlong();
@@ -69,7 +69,7 @@ class CarriageTest {
 
     @Test
     void testCarriageStopsAfterMaxSteps() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 2);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 2);
         carriage.setDirection(Direction.RIGHT);
 
         Train mockTrain = new Train(new Point2D.Double(10, 10), Direction.RIGHT, testPath, field);
@@ -92,7 +92,7 @@ class CarriageTest {
 
     @Test
     void testCarriageResetOnInvalidMovement() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
         carriage.setDirection(Direction.UP); // Неправильное направление
 
         Train mockTrain = new Train(new Point2D.Double(10, 10), Direction.RIGHT, testPath, field);
@@ -107,7 +107,7 @@ class CarriageTest {
 
     @Test
     void testCarriageWithPushingTrain() {
-        Carriage carriage = new Carriage(new Point2D.Double(20, 10), testPath, field, 2);
+        Platform carriage = new Platform(new Point2D.Double(20, 10), testPath, field, 2);
 
         Train train = field.createTrain(new Point2D.Double(20, 10), Direction.RIGHT);
         assertNotNull(train);
@@ -123,7 +123,7 @@ class CarriageTest {
 
     @Test
     void testCarriageDeactivation() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 2);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 2);
 
         assertTrue(carriage.isActive());
         carriage.deactivate();
@@ -132,7 +132,7 @@ class CarriageTest {
 
     @Test
     void testCarriageInheritance() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
 
         assertInstanceOf(abstractPlatform.class, carriage);
         assertTrue(carriage.isActive());
@@ -140,7 +140,7 @@ class CarriageTest {
 
     @Test
     void testFindNextPointForCarriage() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
 
         assertThrows(NullPointerException.class, carriage::moveAlong);
 
@@ -151,7 +151,7 @@ class CarriageTest {
 
     @Test
     void testCarriageSetters() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
 
         carriage.setMoveable(false);
         assertFalse(carriage.isMoveable());
@@ -169,7 +169,7 @@ class CarriageTest {
 
     @Test
     void testCarriageFieldReference() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
 
         assertNotNull(carriage.getField());
         assertEquals(field, carriage.getField());
@@ -177,7 +177,7 @@ class CarriageTest {
 
     @Test
     void testCarriagePositionUpdate() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
 
         Point2D newPosition = new Point2D.Double(25, 25);
         carriage.setPosition(newPosition);
@@ -187,7 +187,7 @@ class CarriageTest {
 
     @Test
     void testCarriageDirectionUpdate() {
-        Carriage carriage = new Carriage(new Point2D.Double(10, 10), testPath, field, 3);
+        Platform carriage = new Platform(new Point2D.Double(10, 10), testPath, field, 3);
 
         assertNull(carriage.getDirection());
 
@@ -208,7 +208,7 @@ class CarriageTest {
         );
         field.createAPath(extendedPath);
 
-        Carriage carriage = new Carriage(new Point2D.Double(20, 10), extendedPath, field, 2);
+        Platform carriage = new Platform(new Point2D.Double(20, 10), extendedPath, field, 2);
 
         Train train = field.createTrain(new Point2D.Double(10, 10), Direction.RIGHT);
 

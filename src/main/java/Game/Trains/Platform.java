@@ -4,62 +4,97 @@ import Game.Field;
 import java.awt.geom.Point2D;
 import java.util.List;
 
-public class Platform extends AbstractCarriage{
-    //private Point2D previousPosition;
+public class Platform extends AbstractCarriage {
+    private final int maxSteps;
+    private int currentSteps;
+    //private boolean isMoveable;
+    //private Train pushingTrain;
 
-    public Platform(Point2D position, List<Point2D> paths,  Field field) {
+    public void setMoveable(boolean moveable) {
+        isMoveable = moveable;
+    }
+
+    public void setPushingTrain(Train pushingTrain) {
+        this.pushingTrain = pushingTrain;
+    }
+
+    public void setCurrentSteps(int currentSteps) {
+        this.currentSteps = currentSteps;
+    }
+
+    public int getMaxSteps() {
+        return maxSteps;
+    }
+
+    public boolean isMoveable() {
+        return isMoveable;
+    }
+
+    public Train getPushingTrain() {
+        return pushingTrain;
+    }
+
+    public Platform(Point2D position, List<Point2D> paths, Field field, int steps) {
         super(position, null, true, paths, field);
-    }
-
-    public Point2D getPreviousPosition() {
-        return previousPosition;
-    }
-
-    @Override
-    public Point2D findNextPoint() {
-        double dx = 0, dy = 0;
-        switch (this.direction) {
-            case UP: dy = -10; break;
-            case DOWN: dy = 10; break;
-            case LEFT: dx = -10; break;
-            case RIGHT: dx = 10; break;
-            case RIGHTUP:  dy = -10; break;
-            case LEFTUP:  dy = -10; break;
-            case DOWNRIGHT: dx = 10;  break;
-            case DOWNLEFT: dx = -10; break;
-            case UPRIGHT: dx = 10;  break;
-            case UPLEFT: dx = -10;  break;
-            case LEFTDOWN:  dy = 10; break;
-            case RIGHTDOWN:  dy = 10; break;
-
-            // Сложные направления
-            case BACKWARDDOWNRIGHT: dx = 10; dy = 10; break; // Вниз-вправо
-            case BACKWARDDOWNLEFT: dx = -10; dy = 10; break; // Вниз-влево
-            case RIGHTBACKWARDDOWN: dx = 10; dy = 10; break; // Вниз-вправо
-            case RIGHTBACKWARDUP: dx = 10; dy = -10; break; // Вверх-вправо
-            case LEFTBACKWARDUP: dx = -10; dy = -10; break; // Вверх-влево
-            case LEFTBACKWARDDOWN: dx = -10; dy = 10; break; // Вниз-влево
-            case UPBACKWARDRIGHT: dx = 10; dy = -10; break; // Вверх-вправо
-            case UPBACKWARDLEFT: dx = -10; dy = -10; break; // Вверх-влево
-        }
-        return new Point2D.Double(this.position.getX() + dx, this.position.getY() + dy);
+        this.maxSteps = steps;
+        this.currentSteps = 0;
+        this.pushingTrain = null;
+        this.isMoveable = true;
     }
 
     @Override
     protected void performMovement(Point2D nextPosition) {
-        this.previousPosition = this.position;
-        this.position = nextPosition;
+        if (currentSteps < maxSteps) {
+              currentSteps++;
+
+            // Если это был первый шаг, запоминаем поезд и его исходную позицию
+            if (currentSteps == 1) {
+                for (abstractPlatform train : getField().getTrains()) {
+                    boolean isQ = train.getPosition().equals(position);
+                    if (train instanceof Train && isQ) {
+                        pushingTrain = (Train) train;
+                        break;
+                    }
+                }
+            }
+
+            super.performMovement(nextPosition);
+
+        } else {
+            this.isMoveable = false;
+            // Достигнут лимит шагов - вызываем столкновение для поезда
+            if (pushingTrain != null) {
+                pushingTrain.handleCollision();
+                pushingTrain = null;
+                currentSteps = 0;
+                this.setDirection(null);
+            }
+        }
     }
 
     @Override
     protected void handleInvalidMovement() {
-        deactivate();
-        return;
+        // При невалидном движении сбрасываем счетчик
+        currentSteps = 0;
+        pushingTrain = null;
+        this.isMoveable = false;
+        super.handleInvalidMovement();
     }
 
     @Override
     protected void handleCollision() {
-        deactivate();
-        return;
+        // При столкновении сбрасываем счетчик
+        currentSteps = 0;
+        pushingTrain = null;
+        this.isMoveable = false;
+        super.handleCollision();
+    }
+
+    public int getSteps() {
+        return maxSteps;
+    }
+
+    public int getCurrentSteps() {
+        return currentSteps;
     }
 }

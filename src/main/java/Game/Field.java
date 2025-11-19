@@ -26,7 +26,7 @@ public class Field {
                 }
             }
         }
-        if (platform != null && platform instanceof Carriage && !((Carriage) platform).isMoveable() && platform.getPosition().equals(position)) {
+        if (platform != null && platform instanceof Platform && !((Platform) platform).isMoveable() && platform.getPosition().equals(position)) {
             return false;
         }
 
@@ -34,8 +34,8 @@ public class Field {
     }
 
     public void setMoveableToUnique(){
-        if (platform instanceof Carriage) {
-            ((Carriage) platform).setMoveable(true);
+        if (platform instanceof Platform) {
+            ((Platform) platform).setMoveable(true);
         }
     }
 
@@ -53,13 +53,13 @@ public class Field {
 
     public void createPlatform(Point2D position) {
         if (paths.contains(position) && isAvailablePosition(position)) {
-            platform = new Platform(position, this.paths, this);
+            platform = new Carriage(position, this.paths, this);
         }
     }
 
     public void createUniquePlatform(Point2D position, int step) {
         if (paths.contains(position) && isAvailablePosition(position)) {
-            platform = new Carriage(position, this.paths, this, step);
+            platform = new Platform(position, this.paths, this, step);
         }
     }
 
