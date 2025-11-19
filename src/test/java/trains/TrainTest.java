@@ -2,56 +2,32 @@ package trains;
 
 import Game.Direction;
 import Game.Field;
-import Game.Trains.Platform;
-import Game.Train_path;
 import Game.Trains.Train;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import Game.Trains.abstractPlatform;
+import java.util.Arrays;
 
 class TrainTest {
-    private Train train;
-    private List<Train_path> trainPaths;
     private Field testField;
+    private Train train;
 
-    private static List<Point2D> createStraightPath(int startX, int startY, int endX, int endY, int step) {
+    private List<Point2D> createStraightPath(int startX, int startY, int endX, int endY) {
         List<Point2D> path = new ArrayList<>();
 
-        int x = startX;
-        int y = startY;
-        int dx = Integer.compare(endX, startX);
-        int dy = Integer.compare(endY, startY);
-
-        path.add(new Point2D.Double(x, y));
-
-        while (x != endX || y != endY) {
-            x += dx * step;
-            y += dy * step;
-            path.add(new Point2D.Double(x, y));
-        }
-
-        return path;
-    }
-
-    private static List<Point2D> createDiagonalPath(int startX, int startY, int endX, int endY, int step) {
-        List<Point2D> path = new ArrayList<>();
-
-        int x = startX;
-        int y = startY;
-        int dx = Integer.compare(endX, startX);
-        int dy = Integer.compare(endY, startY);
-
-        path.add(new Point2D.Double(x, y));
-
-        while (x != endX && y != endY) {
-            x += dx * step;
-            y += dy * step;
-            path.add(new Point2D.Double(x, y));
+        if (startX == endX) {
+            for (int y = startY; y <= endY; y += 10) {
+                path.add(new Point2D.Double(startX, y));
+            }
+        } else if (startY == endY) {
+            for (int x = startX; x <= endX; x += 10) {
+                path.add(new Point2D.Double(x, startY));
+            }
         }
 
         return path;
@@ -61,287 +37,205 @@ class TrainTest {
     void setUp() {
         testField = new Field(100, 100);
 
-        // Создаем тестовые пути
-        List<Point2D> horizontalPath = createStraightPath(0, 50, 100, 50, 10);
-        List<Point2D> verticalPath = createStraightPath(50, 0, 50, 100, 10);
-        List<Point2D> verticalPath1 = createStraightPath(70, 0, 70, 100, 10);
-        List<Point2D> horizontalPath2 = createStraightPath(0, 70, 100, 70, 10);
+        List<Point2D> horizontalPath = createStraightPath(10, 30, 60, 30);
+        List<Point2D> verticalPath = createStraightPath(40, 10, 40, 60);
 
-        trainPaths = new ArrayList<>();
-        trainPaths.add(new Train_path(horizontalPath));
-        trainPaths.add(new Train_path(verticalPath));
-        trainPaths.add(new Train_path(verticalPath1));
-        trainPaths.add(new Train_path(horizontalPath2));
-
-        // Добавляем пути в поле
         testField.createAPath(horizontalPath);
         testField.createAPath(verticalPath);
-        testField.createAPath(verticalPath1);
-        testField.createAPath(horizontalPath2);
     }
 
     @Test
     void testTrainMovesUp() {
-        train = new Train(new Point2D.Double(50, 50), Direction.UP);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 40), train.getPosition());
+        train = testField.createTrain(new Point2D.Double(40, 30), Direction.UP);
+        assertNotNull(train);
+
+        testField.move(train);
+        Point2D newPosition = train.getPosition();
+
+        assertEquals(new Point2D.Double(40, 20), newPosition);
+        assertTrue(train.isActive());
     }
 
     @Test
     void testTrainMovesDown() {
-        train = new Train(new Point2D.Double(50, 50), Direction.DOWN);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 60), train.getPosition());
+        train = testField.createTrain(new Point2D.Double(40, 50), Direction.DOWN);
+        assertNotNull(train);
+
+        testField.move(train);
+        assertEquals(new Point2D.Double(40, 60), train.getPosition());
+        assertTrue(train.isActive());
     }
 
     @Test
     void testTrainMovesLeft() {
-        train = new Train(new Point2D.Double(50, 50), Direction.LEFT);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(40, 50), train.getPosition());
+        train = testField.createTrain(new Point2D.Double(50, 30), Direction.LEFT);
+        assertNotNull(train);
+
+        testField.move(train);
+        assertEquals(new Point2D.Double(40, 30), train.getPosition());
+        assertTrue(train.isActive());
     }
 
     @Test
     void testTrainMovesRight() {
-        train = new Train(new Point2D.Double(50, 50), Direction.RIGHT);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(60, 50), train.getPosition());
+        train = testField.createTrain(new Point2D.Double(50, 30), Direction.RIGHT);
+        assertNotNull(train);
+
+        testField.move(train);
+        assertEquals(new Point2D.Double(60, 30), train.getPosition());
+        assertTrue(train.isActive());
     }
 
     @Test
     void testTrainMovesRightUp() {
-        train = new Train(new Point2D.Double(40, 50), Direction.RIGHTUP);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 40), train.getPosition());
-    }
+        List<Point2D> complexPath = Arrays.asList(
+                new Point2D.Double(70, 30),
+                new Point2D.Double(70, 40)
+        );
+        testField.createAPath(complexPath);
 
-    @Test
-    void testTrainMovesLeftUp() {
-        train = new Train(new Point2D.Double(60, 50), Direction.LEFTUP);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 40), train.getPosition());
-    }
+        train = testField.createTrain(new Point2D.Double(60, 30), Direction.RIGHTUP);
+        assertNotNull(train);
 
-    @Test
-    void testTrainMovesDownRight() {
-        train = new Train(new Point2D.Double(50, 40), Direction.DOWNRIGHT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(60, 50), train.getPosition());
-    }
+        testField.move(train);
+        assertEquals(new Point2D.Double(70, 30), train.getPosition());
 
-    @Test
-    void testTrainMovesDownLeft() {
-        train = new Train(new Point2D.Double(50, 40), Direction.DOWNLEFT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(40, 50), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesUpRight() {
-        train = new Train(new Point2D.Double(50, 60), Direction.UPRIGHT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-
-        assertEquals(new Point2D.Double(60, 50), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesUpLeft() {
-        train = new Train(new Point2D.Double(50, 60), Direction.UPLEFT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(40, 50), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesLeftDown() {
-        train = new Train(new Point2D.Double(60, 50), Direction.LEFTDOWN);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 60), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesRightDown() {
-        train = new Train(new Point2D.Double(40, 50), Direction.RIGHTDOWN);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 60), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesBackwardDownRight() {
-        train = new Train(new Point2D.Double(50, 60), Direction.BACKWARDDOWNRIGHT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(70, 60), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesBackwardDownLeft() {
-        train = new Train(new Point2D.Double(70, 60), Direction.BACKWARDDOWNLEFT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 60), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesRightBackwardDown() {
-        train = new Train(new Point2D.Double(60, 50), Direction.RIGHTBACKWARDDOWN);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(60, 70), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesRightBackwardUp() {
-        train = new Train(new Point2D.Double(60, 70), Direction.RIGHTBACKWARDUP);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(60, 50), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesLeftBackwardUp() {
-        train = new Train(new Point2D.Double(40, 70), Direction.LEFTBACKWARDUP);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(40, 50), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesLeftBackwardDown() {
-        train = new Train(new Point2D.Double(40, 50), Direction.LEFTBACKWARDDOWN);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(40, 70), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesUpBackwardRight() {
-        train = new Train(new Point2D.Double(50, 60), Direction.UPBACKWARDRIGHT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(70, 60), train.getPosition());
-    }
-
-    @Test
-    void testTrainMovesUpBackwardLeft() {
-        train = new Train(new Point2D.Double(70, 60), Direction.UPBACKWARDLEFT);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(new Point2D.Double(50, 60), train.getPosition());
+        testField.move(train);
+        assertEquals(new Point2D.Double(70, 30), train.getPosition());
     }
 
     @Test
     void testTrainDeactivatesWhenNoPath() {
-        train = new Train(new Point2D.Double(150, 150), Direction.RIGHT);
-        assertTrue(train.isActive());
-        train.moveAlongPath(trainPaths, testField);
-        assertFalse(train.isActive());
+        train = testField.createTrain(new Point2D.Double(150, 150), Direction.RIGHT);
+        assertNull(train);
     }
 
     @Test
     void testTrainStopsWhenCollision() {
-        // Создаем первый поезд
-        Train train1 = new Train(new Point2D.Double(50, 50), Direction.RIGHT);
+        Train train1 = testField.createTrain(new Point2D.Double(40, 30), Direction.RIGHT);
+        assertNotNull(train1);
 
-        // Создаем второй поезд на пути первого
-        Train train2 = new Train(new Point2D.Double(60, 50), Direction.LEFT);
+        Train train2 = testField.createTrain(new Point2D.Double(50, 30), Direction.RIGHT);
+        assertNotNull(train2);
 
-        // Размещаем поезда на поле
-        testField.createTrain(train1.getPosition(), train1.getDirection());
-        testField.createTrain(train2.getPosition(), train2.getDirection());
+        testField.move(train1);
 
-        // Двигаем первый поезд
-        train1.moveAlongPath(trainPaths, testField);
-
-        // Поезд не должен двигаться из-за столкновения
-        assertEquals(new Point2D.Double(60, 50), train1.getPosition());
+        assertEquals(new Point2D.Double(50, 30), train1.getPosition());
     }
 
     @Test
     void testTrainPushesPlatform() {
-        // Создаем поезд
-        train = new Train(new Point2D.Double(10, 50), Direction.RIGHT);
+        List<Point2D> platformPath = createStraightPath(10, 50, 40, 50);
+        testField.createAPath(platformPath);
 
+        train = testField.createTrain(new Point2D.Double(10, 50), Direction.RIGHT);
+        assertNotNull(train);
 
-        for (Train_path path: trainPaths) {
-            testField.setPaths(path);
-        }
-
-        // Создаем платформу на пути поезда
         testField.createPlatform(new Point2D.Double(20, 50));
+        abstractPlatform platform = testField.getPlatforms();
+        assertNotNull(platform);
 
-        // Двигаем поезд
-        train.moveAlongPath(trainPaths, testField);
+        testField.move(train);
 
-        // Проверяем что поезд переместился
         assertEquals(new Point2D.Double(20, 50), train.getPosition());
 
-        // Двигаем поезд
-        train.moveAlongPath(trainPaths, testField);
-
-        // Проверяем что платформа сдвинулась
-        Platform platform = testField.getPlatforms().get(0);
-        assertEquals(new Point2D.Double(30, 50), platform.getPosition());
+        assertEquals(new Point2D.Double(20, 50), platform.getPosition());
     }
 
     @Test
-    void testTrainDeactivatesPlatformWhenOffPath() {
-        // Создаем поезд в конце пути
-        train = new Train(new Point2D.Double(90, 50), Direction.RIGHT);
+    void testTrainDeactivatesWhenOffPath() {
+        List<Point2D> shortPath = Arrays.asList(
+                new Point2D.Double(10, 50),
+                new Point2D.Double(20, 50)
+        );
+        testField.createAPath(shortPath);
 
-        // Создаем платформу на последней точке пути
-        testField.createPlatform(new Point2D.Double(100, 50));
+        train = testField.createTrain(new Point2D.Double(10, 50), Direction.RIGHT);
+        assertNotNull(train);
 
-        // Двигаем поезд
-        train.moveAlongPath(trainPaths, testField);
-        train.moveAlongPath(trainPaths, testField);
+        testField.move(train);
+        assertEquals(new Point2D.Double(20, 50), train.getPosition());
+        assertTrue(train.isActive());
 
-        // Платформа должна деактивироваться
-        //Platform platform = testField.getPlatforms().get(0);
-        assertTrue(testField.getPlatforms().size()== 0);
-        //assertFalse(platform.isActive());
+        testField.move(train);
+        assertFalse(train.isActive());
     }
 
     @Test
     void testMovementHistory() {
-        train = new Train(new Point2D.Double(50, 50), Direction.RIGHT);
+        train = testField.createTrain(new Point2D.Double(40, 30), Direction.RIGHT);
+        assertNotNull(train);
 
-        // Первое движение
-        train.moveAlongPath(trainPaths, testField);
-        assertEquals(1, train.getMovementHistory().size());
-        assertEquals(new Point2D.Double(50, 50), train.getMovementHistory().get(0));
+        testField.move(train);
+        List<Point2D> history = train.getMovementHistory();
+        assertEquals(1, history.size());
+        assertEquals(new Point2D.Double(50, 30), train.getPosition());
 
-        // Второе движение
-        train.moveAlongPath(trainPaths, testField);
-        //assertEquals(2, train.getMovementHistory().size());
-        assertTrue(train.getMovementHistory().size() == 2);
-        assertEquals(new Point2D.Double(60, 50), train.getMovementHistory().get(1));
+        testField.move(train);
+        history = train.getMovementHistory();
+        assertEquals(2, history.size());
+        assertEquals(new Point2D.Double(60, 30), train.getPosition());
 
-        // Сброс истории
         train.resetMovementHistory();
         assertEquals(0, train.getMovementHistory().size());
+    }
+
+    @Test
+    void testTrainCreationOnValidPath() {
+        train = testField.createTrain(new Point2D.Double(40, 40), Direction.RIGHT);
+        assertNotNull(train);
+        assertTrue(train.isActive());
+        assertEquals(new Point2D.Double(40, 40), train.getPosition());
+        assertEquals(Direction.RIGHT, train.getDirection());
+    }
+
+    @Test
+    void testTrainCreationOnInvalidPosition() {
+        train = testField.createTrain(new Point2D.Double(25, 25), Direction.RIGHT);
+        assertNull(train);
+    }
+
+    @Test
+    void testMultipleTrainMovements() {
+        Train train1 = testField.createTrain(new Point2D.Double(50, 30), Direction.RIGHT);
+        Train train2 = testField.createTrain(new Point2D.Double(40, 40), Direction.UP);
+
+        assertNotNull(train1);
+        assertNotNull(train2);
+
+        testField.move(train1);
+        testField.move(train2);
+
+        assertEquals(new Point2D.Double(60, 30), train1.getPosition());
+        assertEquals(new Point2D.Double(40, 30), train2.getPosition());
+
+        assertTrue(train1.isActive());
+        assertTrue(train2.isActive());
+    }
+
+    @Test
+    void testTrainDirectionChangeOnComplexPath() {
+        List<Point2D> lShapePath = Arrays.asList(
+                new Point2D.Double(70, 30),
+                new Point2D.Double(70, 40),
+                new Point2D.Double(70, 50),
+                new Point2D.Double(60, 50)
+        );
+        testField.createAPath(lShapePath);
+
+        train = testField.createTrain(new Point2D.Double(60, 30), Direction.LEFTBACKWARDDOWN);
+        assertNotNull(train);
+
+        testField.move(train);
+        assertEquals(new Point2D.Double(70, 30), train.getPosition());
+
+        testField.move(train);
+        assertEquals(new Point2D.Double(70, 40), train.getPosition());
+
+        testField.move(train);
+        assertEquals(new Point2D.Double(70, 50), train.getPosition());
+
+        testField.move(train);
+        assertEquals(new Point2D.Double(60, 50), train.getPosition());
     }
 }

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import Game.Field;
 import Game.Direction;
-
 import java.awt.geom.Point2D;
 import java.util.List;
 
@@ -25,13 +24,14 @@ public class FieldTest {
             eventCount += 1;
         }
     }
+
     private Game game;
     private Field field;
 
     @BeforeEach
     public void testSetup(){
         eventCount = 0;
-        field = new Field(100, 100);
+        field = new Field(50, 50);
         game = new Game();
         field.addFieldActionListener(new FieldObserver());
     }
@@ -85,10 +85,50 @@ public class FieldTest {
         List<Point2D> first_path = setUpFirstPoints();
         field.createAPath(first_path);
 
-        Train train = field.createTrain(new Point2D.Double(20, 30), Direction.UPRIGHT);
+        Train train = field.createTrain(new Point2D.Double(20, 30), Direction.RIGHT);
         Assertions.assertNotNull(train);
     }
 
+    @Test
+    public void test_create_path_success() {
+        List<Point2D> path = setUpFirstPoints();
+        field.createAPath(path);
 
+        Assertions.assertEquals(3, field.getPaths().size());
+        Assertions.assertTrue(field.getPaths().containsAll(path));
+    }
 
+    @Test
+    public void test_create_path_invalid() {
+        List<Point2D> invalidPath = List.of(new Point2D.Double(150, 150)); // За пределами поля
+        field.createAPath(invalidPath);
+
+        Assertions.assertTrue(field.getPaths().isEmpty());
+    }
+
+    @Test
+    public void test_isAvailablePosition() {
+        List<Point2D> path = setUpFirstPoints();
+        field.createAPath(path);
+
+        Assertions.assertTrue(field.isAvailablePosition(new Point2D.Double(20, 30)));
+
+        Assertions.assertFalse(field.isAvailablePosition(new Point2D.Double(50, 50)));
+    }
+
+    @Test
+    public void test_ifPositionFree() {
+        List<Point2D> path = setUpFirstPoints();
+        field.createAPath(path);
+
+        Train train = field.createTrain(new Point2D.Double(20, 30), Direction.RIGHT);
+        Assertions.assertNotNull(train);
+
+        Train train2 = field.createTrain(new Point2D.Double(30, 30), Direction.RIGHT);
+        Assertions.assertNotNull(train2);
+
+        Assertions.assertFalse(field.ifPositionFree(new Point2D.Double(30, 30), train));
+
+        Assertions.assertTrue(field.ifPositionFree(new Point2D.Double(40, 30), train));
+    }
 }

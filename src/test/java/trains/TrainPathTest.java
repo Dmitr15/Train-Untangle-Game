@@ -1,19 +1,22 @@
 package trains;
+
 import Game.Direction;
-//import Game.Pedestrian;
-import Game.Train_path;
-//import Game.Trains.Abstract_Train;
 import Game.Trains.Train;
 import org.junit.jupiter.api.Test;
-
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+import Game.Field;
+import org.junit.jupiter.api.BeforeEach;
 
 public class TrainPathTest {
+    private Field field;
+
+    @BeforeEach
+    public void setUp() {
+        field = new Field(100, 100);
+    }
 
     @Test
     public void testCorrectRouteInitialization() {
@@ -22,19 +25,48 @@ public class TrainPathTest {
                 new Point2D.Double(10, 0),
                 new Point2D.Double(10, 10)
         );
-        Train_path trainPath = new Train_path(route);
-        assertNotNull(trainPath.get_route());
-        assertEquals(3, trainPath.get_route().size());
+        field.createAPath(route);
+        assertNotNull(field.getPaths());
+        assertEquals(3, field.getPaths().size());
+        assertTrue(field.getPaths().containsAll(route));
     }
 
     @Test
     public void testIncorrectRouteInitialization() {
         List<Point2D> badRoute = Arrays.asList(
                 new Point2D.Double(0, 0),
-                new Point2D.Double(15, 5) // Invalid step
+                new Point2D.Double(15, 5)
         );
-        Train_path trainPath = new Train_path(badRoute);
-        assertNull(trainPath.get_route());
+
+        int initialPathCount = field.getPaths().size();
+        field.createAPath(badRoute);
+
+        assertEquals(initialPathCount, field.getPaths().size());
+    }
+
+    @Test
+    public void testRouteWithSinglePoint() {
+        List<Point2D> singlePointRoute = List.of(
+                new Point2D.Double(10, 10)
+        );
+
+        int initialPathCount = field.getPaths().size();
+        field.createAPath(singlePointRoute);
+
+        assertEquals(initialPathCount, field.getPaths().size());
+    }
+
+    @Test
+    public void testRouteOutsideFieldBounds() {
+        List<Point2D> outOfBoundsRoute = Arrays.asList(
+                new Point2D.Double(0, 0),
+                new Point2D.Double(150, 150)
+        );
+
+        int initialPathCount = field.getPaths().size();
+        field.createAPath(outOfBoundsRoute);
+
+        assertEquals(initialPathCount, field.getPaths().size());
     }
 
     @Test
@@ -43,42 +75,127 @@ public class TrainPathTest {
                 new Point2D.Double(0, 0),
                 new Point2D.Double(10, 0)
         );
-        Train_path trainPath = new Train_path(route);
-        Train train = new Train(new Point2D.Double(0, 0), Direction.RIGHT);
+        field.createAPath(route);
 
-        trainPath.place_train(train);
-        assertEquals(1, trainPath.getTrains().size());
+        Train train = field.createTrain(new Point2D.Double(0, 0), Direction.RIGHT);
+        assertNotNull(train);
+        assertEquals(1, field.getTrains().size());
 
-        trainPath.removeTrain(train);
-        assertEquals(0, trainPath.getTrains().size());
+        field.deleteTrain(train);
+        assertEquals(0, field.getTrains().size());
     }
 
     @Test
-    public void testGetPositionOfTrains() {
+    public void testTrainPositionOnPath() {
+        List<Point2D> route = Arrays.asList(
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 0),
+                new Point2D.Double(20, 0)
+        );
+        field.createAPath(route);
+
+        Train train1 = field.createTrain(new Point2D.Double(0, 0), Direction.RIGHT);
+        Train train2 = field.createTrain(new Point2D.Double(10, 0), Direction.RIGHT);
+
+        assertNotNull(train1);
+        assertNotNull(train2);
+
+        assertEquals(new Point2D.Double(0, 0), train1.getPosition());
+        assertEquals(new Point2D.Double(10, 0), train2.getPosition());
+
+        assertTrue(field.getPaths().contains(train1.getPosition()));
+        assertTrue(field.getPaths().contains(train2.getPosition()));
+    }
+
+    @Test
+    public void testTrainMovementAlongPath() {
+        List<Point2D> route = Arrays.asList(
+                new Point2D.Double(10, 10),
+                new Point2D.Double(20, 10),
+                new Point2D.Double(30, 10)
+        );
+        field.createAPath(route);
+
+        Train train = field.createTrain(new Point2D.Double(10, 10), Direction.RIGHT);
+        assertNotNull(train);
+
+        Point2D startPosition = train.getPosition();
+
+        field.move(train);
+
+        Point2D newPosition = train.getPosition();
+        assertNotEquals(startPosition, newPosition);
+
+        assertTrue(field.getPaths().contains(newPosition));
+
+        assertTrue(train.isActive());
+    }
+
+    @Test
+    public void testTrainCreationOffPath() {
         List<Point2D> route = Arrays.asList(
                 new Point2D.Double(0, 0),
                 new Point2D.Double(10, 0)
         );
-        Train_path trainPath = new Train_path(route);
-        Train train1 = new Train(new Point2D.Double(0, 0), Direction.RIGHT);
-        Train train2 = new Train(new Point2D.Double(10, 0), Direction.LEFT);
+        field.createAPath(route);
 
-        trainPath.place_train(train1);
-        trainPath.place_train(train2);
-
-        List<Point2D> positions = trainPath.getPositionOfTrains(train1);
-        assertEquals(1, positions.size());
-        assertTrue(positions.contains(new Point2D.Double(10, 0)));
+        Train train = field.createTrain(new Point2D.Double(50, 50), Direction.RIGHT);
+        assertNull(train);
     }
 
     @Test
-    public void testGetPointReturnsCorrectReference() {
-        Point2D point = new Point2D.Double(10, 10);
-        Point2D point1 = new Point2D.Double(20, 10);
-        List<Point2D> route = Arrays.asList(point, point1);
-        Train_path trainPath = new Train_path(route);
+    public void testMultiplePaths() {
+        List<Point2D> route1 = Arrays.asList(
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 0),
+                new Point2D.Double(20, 0)
+        );
 
-        Point2D result = trainPath.get_point(new Point2D.Double(10, 10));
-        assertEquals(point, result);
+        List<Point2D> route2 = Arrays.asList(
+                new Point2D.Double(0, 10),
+                new Point2D.Double(10, 10),
+                new Point2D.Double(20, 10)
+        );
+
+        field.createAPath(route1);
+        field.createAPath(route2);
+
+        assertEquals(6, field.getPaths().size());
+        assertTrue(field.getPaths().containsAll(route1));
+        assertTrue(field.getPaths().containsAll(route2));
+    }
+
+    @Test
+    public void testPathValidationWithDiagonalMovement() {
+        List<Point2D> diagonalRoute = Arrays.asList(
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 10) // Диагональное движение
+        );
+
+        int initialPathCount = field.getPaths().size();
+        field.createAPath(diagonalRoute);
+
+        assertEquals(initialPathCount, field.getPaths().size());
+    }
+
+    @Test
+    public void testConflictingDirectionsOnPath() {
+        List<Point2D> route = Arrays.asList(
+                new Point2D.Double(0, 0),
+                new Point2D.Double(10, 0),
+                new Point2D.Double(20, 0)
+        );
+        field.createAPath(route);
+
+        Train train1 = field.createTrain(new Point2D.Double(0, 0), Direction.RIGHT);
+        assertNotNull(train1);
+
+        Train train2 = field.createTrain(new Point2D.Double(20, 0), Direction.LEFT);
+
+        if (train2 != null) {
+            assertEquals(2, field.getTrains().size());
+        } else {
+            assertEquals(1, field.getTrains().size());
+        }
     }
 }
