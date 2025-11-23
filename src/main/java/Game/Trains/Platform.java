@@ -7,8 +7,6 @@ import java.util.List;
 public class Platform extends AbstractCarriage {
     private final int maxSteps;
     private int currentSteps;
-    //private boolean isMoveable;
-    //private Train pushingTrain;
 
     public void setMoveable(boolean moveable) {
         isMoveable = moveable;
