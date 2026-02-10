@@ -1,13 +1,27 @@
-# Game: Train Traffic Jam
+# Train Traffic Jam
 
-### 1)Rules of the game "Train Traffic Jam":
-### 2)The game takes place on a rectangular board.
-### 3)The board contains train tracks. The beginning and end of the tracks are exits ("teleports") for trains. If a train reaches an exit, it disappears from the board. The tracks can be intersected at right angles.
-### 4)The goal of each train is to reach the exit.
-### 5)The player controls the trains by left-clicking them.
-### 6)The train moves in the direction of the arrow on the roof.
-### 7)If a train collides with another train, it returns to its starting position.
+## The project is a railway logistics game model in Java with a system of tracks, trains, and platforms.
 
+### Rules of the game "Train Traffic Jam":
+ - The game takes place on a rectangular board.
+ - The board contains train tracks. The beginning and end of the tracks are exits ("teleports") for trains. If a train reaches an exit, it disappears from the board. The tracks can be intersected at right angles.
+ - The goal of each train is to reach the exit.
+ - The player controls the trains by left-clicking them.
+ - The train moves in the direction of the arrow on the roof.
+ - If a train collides with another train, it returns to its starting position.
+
+
+## 🚀 Features
+
+- **Dynamic game field** with customizable dimensions
+- **Track system**: create routes of any complexity
+- **Rolling stock types**:
+  - Trains (24 movement directions)
+  - Carriages
+  - Platforms with step limitations
+- **Three difficulty levels** with different configurations
+- **Collision system** and valid move checking
+- **Event-driven architecture** for reactive programming
 
 ## Screens
 
